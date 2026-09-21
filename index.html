@@ -988,10 +988,10 @@
             </div>
             <div class="audio-info">
                 <div class="audio-title">Einführung & Audiokommentar</div>
-                <div class="audio-subtitle">Hör dir die Erklärung zum Start an</div>
+                <div class="audio-subtitle" id="audioSubText">Hör dir die Erklärung zum Start an</div>
             </div>
-            <audio controls>
-                <source src="deine-datei.mp3" type="audio/mpeg">
+            <audio controls preload="auto" id="introAudio">
+                <source src="intro.mp3" type="audio/mpeg">
                 Dein Browser unterstützt kein Audio-Element.
             </audio>
         </div>
@@ -1816,8 +1816,19 @@
             loadRating();
             loadProfile();
             renderDays();
+            
+            // Audio Error Monitoring
+            const audioEl = document.getElementById('introAudio');
+            const subEl = document.getElementById('audioSubText');
+            if (audioEl) {
+                audioEl.addEventListener('error', (e) => {
+                    console.error("Audio-Ladefehler:", e);
+                    if (subEl) {
+                        subEl.innerHTML = '<span style="color: #ef4444;">⚠️ MP3-Datei nicht gefunden (Bitte Dateinamen prüfen)</span>';
+                    }
+                });
+            }
         };
     </script>
 </body>
 </html>
-```[cite: 7]
