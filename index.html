@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Frank Zimmermann - NagelNEU 3D Clay Edition</title>
+    
+    <!-- Apple iOS / Safari Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="NagelNEU">
+    <meta name="format-detection" content="telephone=no">
+
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #121620;
+            --clay-bg: #1a1f2c;
+            --clay-card: #1e2433;
+            --clay-card-hover: #232a3c;
+            --shadow-outer: 10px 10px 25px rgba(0, 0, 0, 0.5), -8px -8px 20px rgba(255, 255, 255, 0.03);
+            --shadow-inner: inset 4px 4px 8px rgba(0, 0, 0, 0.4), inset -4px -4px 8px rgba(255, 255, 255, 0.04);
+            --shadow-button: 6px 6px 14px rgba(0, 0, 0, 0.4), -4px -4px 10px rgba(255, 255, 255, 0.05);
+            --shadow-button-active: inset 3px 3px 6px rgba(0, 0, 0, 0.5), inset -3px -3px 6px rgba(255, 255, 255, 0.05);
+            
+            --accent-cyan: #00f2fe;
+            --accent-violet: #4facfe;
+            --accent-purple: #9f7aea;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --text-white: #ffffff;
+            --success-green: #34d399;
+            --accent-yellow: #fbbf24;
+        }
+
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.7;
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: max(20px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(40px, calc(20px + env(safe-area-inset-bottom))) max(16px, env(safe-area-inset-left));
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* 3D Clay Status Bar */
+        .status-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 14px 24px;
+            background: var(--clay-card);
+            border-radius: 50px;
+            box-shadow: var(--shadow-outer);
+            flex-wrap: wrap;
+            gap: 12px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .tag {
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-cyan);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--accent-cyan);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.4); opacity: 0.6; }
+        }
+
+        .visitor-counter-badge {
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: var(--accent-yellow);
+            background: rgba(251, 191, 36, 0.08);
+            border: 1px solid rgba(251, 191, 36, 0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: var(--shadow-inner);
+        }
+
+        .program-phase {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .header-title { text-align: center; margin-bottom: 35px; }
+
+        .header-title h1 {
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            font-weight: 800;
+            color: var(--text-white);
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+            line-height: 1.3;
+            margin-bottom: 12px;
+        }
+
+        .header-title h1 span {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-title p.subtitle {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+
+        /* 3D Clay Audio Player Card */
+        .audio-player-card {
+            background: var(--clay-card);
+            border-radius: 20px;
+            padding: 18px 24px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: var(--shadow-outer);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .audio-icon-wrap {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--clay-bg);
+            box-shadow: var(--shadow-inner);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent-cyan);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .audio-info {
+            flex-grow: 1;
+        }
+
+        .audio-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-white);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .audio-subtitle {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .audio-player-card audio {
+            width: 100%;
+            max-width: 280px;
+            height: 38px;
+            accent-color: var(--accent-cyan);
+            border-radius: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .audio-player-card {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .audio-player-card audio {
+                max-width: 100%;
+            }
+        }
+
+        /* 3D Clay Cards */
+        .card {
+            background: var(--clay-card);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-outer);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card:hover {
+            background: var(--clay-card-hover);
+            transform: translateY(-2px);
+        }
+
+        .card.completed { 
+            border-left: 5px solid var(--success-green); 
+        }
+        .card.locked { 
+            opacity: 0.5; 
+        }
+        .card.locked .day-header { 
+            cursor: not-allowed; 
+        }
+
+        .lock-badge {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: var(--clay-bg);
+            box-shadow: var(--shadow-inner);
+            padding: 6px 14px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        .intro-card {
+            border: 1px solid rgba(0, 242, 254, 0.15);
+        }
+
+        .intro-card h2, .card h3 {
+            font-size: 1.35rem;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            margin-bottom: 16px;
+            letter-spacing: -0.3px;
+        }
+
+        .quote-box {
+            font-style: italic;
+            border-left: 3px solid var(--accent-cyan);
+            padding: 16px 20px;
+            background: var(--clay-bg);
+            box-shadow: var(--shadow-inner);
+            margin: 20px 0;
+            border-radius: 0 16px 16px 0;
+            color: #fff;
+        }
+
+        .quote-author {
+            display: block;
+            margin-top: 10px;
+            font-style: normal;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .highlight-box {
+            background: var(--clay-bg);
+            box-shadow: var(--shadow-inner);
+            padding: 20px 24px;
+            margin-top: 20px;
+            border-radius: 16px;
+            font-weight: 400;
+            color: var(--text-main);
+        }
+
+        .neuro-box {
+            background: var(--clay-bg);
+            box-shadow: var(--shadow-inner);
+            border-radius: 16px;
+            padding: 20px 24px;
+            margin: 20px 0;
+            border-left: 3px solid var(--accent-purple);
+        }
+
+        .action-box {
+            background: var(--clay-bg);
+            box-shadow: var(--shadow-inner);
+            padding: 20px 24px;
+            margin-top: 20px;
+            border-radius: 16px;
+            border-left: 3px solid var(--success-green);
+        }
+
+        .action-box h5 {
+            color: var(--success-green);
+            font-size: 0.95rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .icon-wrapper {
+            width: 50px;
+            height: 50px;
+            border-radius: 16px;
+            background: var(--clay-bg);
+            box-shadow: var(--shadow-inner);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: var(--accent-cyan);
+            flex-shrink: 0;
+        }
+
+        .story-p {
+            font-size: 1.02rem;
+            color: #cbd5e1;
+            margin-bottom: 14px;
+            font-weight: 400;
+        }
+
+        .facts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .facts-grid, .metrics-grid, .rebellion-stats, .input-grid, .footer-interactive-row { 
+                grid-template-columns: 1fr !important; 
+            }
+            .container { padding: 10px 0px; }
+            .card { padding: 24px 20px; }
+        }
+
+        .fact-item {
+            background: var(--clay-bg);
+            box-shadow: var(--shadow-inner);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .fact-item h4 {
+            color: var(--accent-cyan);
+            font-size: 0.98rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        /* Sticky Progress Bar */
+        .progress-sticky {
+            position: sticky;
+            top: max(20px, env(safe-area-inset-top));
+            z-index: 100;
+            background: var(--clay-card);
+            border-radius: 20px;
+            padding: 22px 28px;
+            margin-bottom: 35px;
+            box-shadow: var(--shadow-outer);
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .progress-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            color: var(--text-white);
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 12px;
+            background: var(--clay-bg);
+            box-shadow: var(--shadow-inner);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--success-green));
+            transition: width 0.6s ease;
+            box-shadow: 0 0 12px var(--accent-cyan);
+            border-radius: 10px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .input-grid label {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--accent-cyan);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .input-grid input {
+            width: 100%;
+            background: var(--clay-bg);
+            box-shadow: var(--shadow-inner);
+            border: none;
+            border-radius: 14px;
+            padding: 14px 16px;
+            color: #fff;
+            font-size: 0.95rem;
+            font-family: inherit;
+        }
+
+        .input-grid input:focus {
+            outline: none;
+            box-shadow: var(--shadow-inner), 0 0 12px rgba(0, 242, 254, 0.3);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .metric-tile {
+            background: var(--clay-bg);
+            box-shadow: var(--shadow-inner);
+            border-radius: 16px;
+            padding: 18px 16px;
+            text-align: center;
+        }
+
+        .metric-tile .label {
+            color: var(--text-muted);
+            font-size: 0.72rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .metric-tile .value {
+            color: var(--accent-cyan);
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .metric-tile .unit {
+            color: var(--text-white);
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
+
+        .btn-save {
+            margin-top: 20px;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+            color: #0b0f19;
+            font-size: 0.9rem;
+            font-weight: 700;
+            padding: 14px 30px;
+            min-height: 48px;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: var(--shadow-button);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: inherit;
+        }
+
+        .btn-save:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+        }
+        .btn-save:active {
+            box-shadow: var(--shadow-button-active);
+        }
+
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            padding: 6px 0;
+            min-height: 44px;
+            transition: color 0.2s ease;
+        }
+
+        .day-header:hover .day-title-preview { color: var(--accent-cyan); }
+        .day-header-left { display: flex; align-items: center; gap: 16px; }
+
+        .day-badge {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .day-title-preview {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #ffffff;
+            transition: color 0.3s ease;
+        }
+
+        .day-header-right { display: flex; align-items: center; gap: 14px; }
+
+        .phase-tag {
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .chevron-icon {
+            font-size: 1rem;
+            color: var(--accent-cyan);
+            transition: transform 0.3s ease;
+            width: 32px; height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--clay-bg);
+            box-shadow: var(--shadow-inner);
+            border-radius: 50%;
+        }
+
+        .card.open .chevron-icon {
+            transform: rotate(180deg);
+            background: var(--accent-cyan);
+            color: #0b0f19;
+            box-shadow: none;
+        }
+
+        .day-content {
+            display: none;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 20px;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .card.open .day-content { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-complete {
+            background: var(--clay-bg);
+            box-shadow: var(--shadow-button);
+            color: var(--accent-cyan);
+            font-size: 0.88rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            padding: 14px 28px;
+            min-height: 48px;
+            border-radius: 30px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            margin-top: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: inherit;
+            border: none;
+        }
+
+        .btn-complete:hover {
+            background: var(--accent-cyan);
+            color: #0b0f19;
+            box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+        }
+
+        .btn-complete.is-done {
+            background: var(--success-green);
+            box-shadow: 0 0 20px rgba(52, 211, 153, 0.3);
+            color: #0b0f19;
+        }
+
+        .cta-card {
+            text-align: center;
+            border: 1px solid rgba(0, 242, 254, 0.2);
+            padding: 45px 35px;
+        }
+
+        .btn-switch {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+            color: #0b0f19;
+            font-size: 1.05rem;
+            font-weight: 800;
+            padding: 18px 42px;
+            min-height: 54px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: var(--shadow-button), 0 0 25px rgba(0, 242, 254, 0.3);
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 24px;
+            font-family: inherit;
+        }
+
+        .btn-switch:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 35px rgba(0, 242, 254, 0.5);
+        }
+
+        .btn-switch.active {
+            background: var(--success-green);
+            box-shadow: 0 0 35px rgba(52, 211, 153, 0.4);
+        }
+
+        .status-msg {
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+            font-weight: 600;
+            margin-top: 18px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .status-msg.show { opacity: 1; }
+
+        /* Footer 3D Clay */
+        .footer {
+            margin-top: 60px;
+            padding: 50px 25px 35px 25px;
+            text-align: center;
+            border-radius: 30px 30px 0 0;
+            background: var(--clay-card);
+            box-shadow: var(--shadow-outer);
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .footer-quote {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+        }
+
+        .footer-copyright {
+            font-size: 0.9rem;
+            color: var(--text-white);
+            line-height: 1.6;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .footer-copyright span.author { color: var(--accent-cyan); }
+
+        .footer-legal {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            max-width: 680px;
+            margin: 0 auto 25px auto;
+            line-height: 1.6;
+        }
+
+        .footer-interactive-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 780px;
+            margin: 25px auto;
+            text-align: left;
+        }
+
+        .footer-box {
+            background: var(--clay-bg);
+            box-shadow: var(--shadow-inner);
+            border-radius: 20px;
+            padding: 22px;
+        }
+
+        .footer-box h4 {
+            font-size: 0.9rem;
+            color: var(--accent-yellow);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+        }
+
+        .footer-box p {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .rating-stars {
+            display: inline-flex;
+            gap: 6px;
+            font-size: 1.35rem;
+            cursor: pointer;
+            unicode-bidi: bidi-override;
+            direction: rtl;
+        }
+        .rating-stars span {
+            color: #334155;
+            transition: color 0.2s ease, transform 0.2s ease;
+        }
+        .rating-stars span:hover,
+        .rating-stars span:hover ~ span,
+        .rating-stars span.selected,
+        .rating-stars span.selected ~ span {
+            color: var(--accent-yellow);
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+            transform: scale(1.1);
+        }
+        .rating-msg {
+            font-size: 0.78rem;
+            color: var(--accent-yellow);
+            margin-top: 6px;
+            min-height: 18px;
+            font-weight: 500;
+        }
+
+        .recommend-input, .recommend-textarea {
+            width: 100%;
+            background: var(--clay-card);
+            box-shadow: var(--shadow-inner);
+            border: none;
+            border-radius: 12px;
+            padding: 10px 14px;
+            color: #fff;
+            font-size: 0.85rem;
+            font-family: inherit;
+            margin-bottom: 10px;
+        }
+        .recommend-textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        .recommend-input:focus, .recommend-textarea:focus {
+            outline: none;
+            box-shadow: var(--shadow-inner), 0 0 10px rgba(0, 242, 254, 0.2);
+        }
+
+        .btn-send-recommend {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-violet));
+            color: #0b0f19;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 10px 18px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-family: inherit;
+            box-shadow: var(--shadow-button);
+            transition: transform 0.2s ease;
+        }
+        .btn-send-recommend:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
+        }
+
+        .footer-contact {
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+            background: var(--clay-bg);
+            box-shadow: var(--shadow-inner);
+            padding: 14px 28px;
+            border-radius: 30px;
+            font-size: 0.88rem;
+            color: var(--text-main);
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 25px;
+        }
+
+        .footer-contact a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: color 0.2s ease;
+        }
+
+        .footer-contact a:hover { color: #ffffff; text-shadow: 0 0 10px var(--accent-cyan); }
+        .footer-separator { color: rgba(255, 255, 255, 0.2); }
+
+        /* Rebellion Screen */
+        .rebellion-screen {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(18, 22, 32, 0.97);
+            z-index: 9999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 20px;
+            text-align: center;
+            overflow: hidden;
+            backdrop-filter: blur(30px);
+        }
+
+        .rebellion-screen.show { display: flex; }
+        .rebellion-canvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+        .rebellion-content { position: relative; z-index: 2; max-width: 800px; color: #fff; }
+
+        .rebellion-title {
+            font-size: clamp(2.2rem, 5vw, 3.6rem);
+            font-weight: 900;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--success-green), var(--accent-yellow));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .rebellion-sub {
+            font-size: 1.1rem;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+        }
+
+        .rebellion-name { font-size: 2.2rem; font-weight: 800; color: #fff; margin-bottom: 8px; }
+        .rebellion-line { font-size: 1.05rem; color: #cbd5e1; margin-bottom: 26px; }
+
+        .rebellion-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+            margin: 28px 0;
+        }
+
+        .rebellion-stat {
+            background: var(--clay-card);
+            box-shadow: var(--shadow-outer);
+            border-radius: 20px;
+            padding: 20px;
+        }
+
+        .rebellion-stat .label { color: var(--text-muted); font-size: 0.75rem; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 6px; }
+        .rebellion-stat .value { color: var(--success-green); font-size: 1.7rem; font-weight: 800; }
+        .rebellion-stat .unit { color: #fff; font-size: 0.8rem; margin-top: 4px; }
+
+        .rebellion-quote {
+            font-style: italic;
+            font-size: 1.1rem;
+            color: #fff;
+            border-left: 3px solid var(--success-green);
+            padding: 16px 24px;
+            background: var(--clay-card);
+            box-shadow: var(--shadow-outer);
+            margin: 26px auto;
+            max-width: 700px;
+            text-align: left;
+            border-radius: 0 16px 16px 0;
+        }
+
+        .rebellion-quote span.author { display: block; margin-top: 10px; font-style: normal; font-weight: 700; color: var(--success-green); text-transform: uppercase; letter-spacing: 1px; }
+
+        .btn-rebellion {
+            background: var(--success-green);
+            color: #0b0f19;
+            font-size: 1rem;
+            font-weight: 800;
+            padding: 16px 38px;
+            min-height: 50px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 25px rgba(52, 211, 153, 0.4);
+            transition: transform 0.2s ease;
+            margin-top: 14px;
+            font-family: inherit;
+        }
+
+        .btn-rebellion:hover { transform: scale(1.04); box-shadow: 0 0 35px rgba(52, 211, 153, 0.6); }
+        .btn-rebellion.secondary { background: var(--clay-card); color: var(--accent-cyan); box-shadow: var(--shadow-outer); margin-left: 12px; }
+        .btn-rebellion.secondary:hover { background: var(--accent-cyan); color: #0b0f19; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="tag">
+                <span class="pulse-dot"></span>
+                System aktiv
+            </div>
+            <div class="visitor-counter-badge" id="visitorBadge">
+                👁️ Besucher: <span id="visitorCountDisplay">1248</span>
+            </div>
+            <div class="program-phase">NagelNEU – 3D Clay Edition</div>
+        </div>
+
+        <!-- Main Header -->
+        <header class="header-title">
+            <h1>Frank Zimmermann – <span>NagelNEU Transformation</span></h1>
+            <p class="subtitle">Dein neuer Weg in ein nagelfreies, gesundes & kraftvolles Leben – Habit Reversal Training (HRT) & kognitiv-verhaltenstherapeutische Selbsthilfe im Matte Claymorphism-Design.</p>
+        </header>
+
+        <!-- MINI SPRACHPLAYER -->
+        <div class="audio-player-card">
+            <div class="audio-icon-wrap">
+                🎙️
+            </div>
+            <div class="audio-info">
+                <div class="audio-title">Einführung & Audiokommentar</div>
+                <div class="audio-subtitle">Hör dir die Erklärung zum Start an</div>
+            </div>
+            <audio controls>
+                <source src="deine-datei.mp3" type="audio/mpeg">
+                Dein Browser unterstützt kein Audio-Element.
+            </audio>
+        </div>
+
+        <!-- Welcome Card -->
+        <div class="card intro-card">
+            <h2>✨ Kein Coaching – Eine Ganzheitliche Transformation</h2>
+            <p class="story-p">Hier gibt es keinen Zufall. Es ist alles verständlich, Seite für Seite klar definiert und strukturiert aufgebaut.<br><br>Wir gehen gemeinsam rein ins Labyrinth – und gemeinsam finden wir deinen Ausgang. ⚡ Nie wieder am Nagel kauen.</p>
+            <div class="highlight-box">
+                <strong>🧬 Das Wunder in dir selbst:</strong><br>
+                Viele von uns suchen ihr ganzes Leben lang nach einem großen Wunder oder einer höheren Macht. Wir schauen nach oben zum Himmel oder suchend in die Ferne. Aber wir denken viel zu selten darüber nach, was für ein unglaubliches Wunder wir schon immer ganz nah bei uns tragen: unseren eigenen Körper.
+            </div>
+            <div class="facts-grid" style="margin-top: 20px;">
+                <div class="fact-item">
+                    <h4>🩸 Das Wunder der Heilung</h4>
+                    <p>Wenn du dir in den Finger schneidest, bleibt die Wunde nicht offen. Nach 1–2 Tagen bildet sich eine Kruste, und bald ist sie spurlos verschwunden. Ganz von alleine.</p>
+                </div>
+                <div class="fact-item">
+                    <h4>🛡️ Unermüdlicher Beschützer</h4>
+                    <p>Ob du wach bist oder schläfst: Dein Körper arbeitet rund um die Uhr. Er reinigt sich selbst, repariert Schäden und baut deine Kraft stetig wieder auf.</p>
+                </div>
+            </div>
+            <div class="neuro-box">
+                <h5 style="color: var(--accent-cyan); font-weight: 700; margin-bottom: 8px;">🧠 Dein Mindset-Shift: Optimiere deine Wahrnehmung</h5>
+                <p style="margin-bottom: 8px;">Deine Transformation beginnt im Kopf. Wie du Dinge bewertest, entscheidet darüber, wie leicht dir dieser Weg fällt:</p>
+                <ol style="margin-left: 20px; color: var(--text-main);">
+                    <li><b>Es gibt keine Probleme:</b> Es passieren einfach Dinge in deiner Welt.</li>
+                    <li><b>Erwartungen sind die Falle:</b> Wenn du glaubst, dass immer alles perfekt laufen muss, wirst du schnell enttäuscht.</li>
+                    <li><b>Blockiere dich nicht selbst:</b> Wer nur das Schlechte sieht, übersieht die Chancen.</li>
+                    <li><b>Lebe im Jetzt:</b> Was zählt, ist der Moment. Verändere deine Sichtweise und du verändere deine Welt.</li>
+                </ol>
+            </div>
+            <div class="quote-box">
+                „Du bist die Macht hinter deinen Gedanken – nimm das Steuer in die Hand! Jeder Moment ist deine Wahl: Lass Chaos nicht regieren, sondern verwandle es in deine Stärke. Feiere jeden Schritt – denn selbst der kleinste Sieg ist der Beweis: Du wächst. Du kämpfst. Du veränderst dich.“
+                <span class="quote-author">- Frank Zimmermann</span>
+            </div>
+        </div>
+
+        <!-- Personal Profile -->
+        <div class="card">
+            <div class="section-header">
+                <div class="icon-wrapper">&#128100;</div>
+                <h3>Dein persönliches Profil & Statistik</h3>
+            </div>
+            <p class="story-p">Trage hier deine Daten ein, um deinen Fortschritt lokal im Browser zu verfolgen.</p>
+
+            <div class="input-grid">
+                <div>
+                    <label for="userName">Dein Name (Vorname)</label>
+                    <input type="text" id="userName" placeholder="z. B. Anna">
+                </div>
+                <div>
+                    <label for="userBirthday">Tag deines Starts (Datum)</label>
+                    <input type="date" id="userBirthday">
+                </div>
+                <div>
+                    <label for="userCigs">Rückfälle / Drangmomente pro Tag</label>
+                    <input type="number" id="userCigs" min="1" max="50" placeholder="z. B. 5">
+                </div>
+                <div>
+                    <label for="userPrice">Investment pro Nagelpflege (Euro)</label>
+                    <input type="number" id="userPrice" min="1" max="50" step="0.10" placeholder="z. B. 15.00">
+                </div>
+            </div>
+
+            <button class="btn-save" onclick="saveProfile()">
+                Profil speichern
+                <span>&#128190;</span>
+            </button>
+
+            <div class="metrics-grid" id="metricsGrid">
+                <div class="metric-tile">
+                    <div class="label">Gestoppte Impulse</div>
+                    <div class="value" id="savedCigsValue">0</div>
+                    <div class="unit">Stück</div>
+                </div>
+                <div class="metric-tile">
+                    <div class="label">Investiert in Pflege</div>
+                    <div class="value" id="savedMoneyValue">0,00 &euro;</div>
+                    <div class="unit">Euro</div>
+                </div>
+                <div class="metric-tile">
+                    <div class="label">Erfolgreiche Tage</div>
+                    <div class="value" id="daysGainedValue">0</div>
+                    <div class="unit">Tage</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Switch CTA -->
+        <div class="card cta-card">
+            <h3>TRANSFORMATION STARTEN</h3>
+            <p class="story-p">Mit einem Klick aktivierst du dein 21-Tage-NagelNEU-Programm und schaltest deine täglichen Quests frei.</p>
+            <button class="btn-switch" id="switchBtn" onclick="activateTransformation()">
+                <span id="btnText">Klick mich – und verändere deine Hände</span>
+                <span id="btnIcon">&#9889;</span>
+            </button>
+            <div class="status-msg" id="statusMsg">System aktiviert – deine 21-Tage-Transformation läuft.</div>
+        </div>
+
+        <!-- STICKY PROGRESS BAR -->
+        <div class="progress-sticky">
+            <div class="progress-title-row">
+                <span>&#128203; Deine täglichen Quests</span>
+                <span id="progressText">0 / 21 Tagen abgeschlossen</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+
+        <!-- DYNAMIC ACCORDION DAYS CONTAINER -->
+        <div id="days-container" style="width: 100%;"></div>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div class="footer-quote">
+                „Du bist die Macht hinter deinen Gedanken – nimm das Steuer in die Hand!“
+            </div>
+            <div class="footer-copyright">
+                &copy; 2027 <span class="author">Frank Zimmermann</span> – NagelNEU. Alle Rechte vorbehalten.
+            </div>
+            <div class="footer-legal">
+                Wichtiger Hinweis: Dieses Programm kann eine hilfreiche Selbstbeobachtungs- und Übungsstruktur sein, ersetzt aber keine psychotherapeutische oder ärztliche Behandlung. Verwende das Gummiband ausschließlich als sanften Erinnerungsanker. Es darf nicht schmerzen, die Haut reizen oder als Bestrafung eingesetzt werden. Ein Ring, Armband, Klebepunkt oder eine Berührung der Fingerspitzen kann ebenso als Erinnerung dienen.
+            </div>
+
+            <div class="footer-interactive-row">
+                <!-- 1. Bewertungssystem Box -->
+                <div class="footer-box">
+                    <h4>⭐ Bewerte NagelNEU</h4>
+                    <p>Schenk uns deine Sterne-Bewertung:</p>
+                    <div class="rating-stars" id="ratingStars">
+                        <span data-value="5" onclick="setRating(5)">★</span>
+                        <span data-value="4" onclick="setRating(4)">★</span>
+                        <span data-value="3" onclick="setRating(3)">★</span>
+                        <span data-value="2" onclick="setRating(2)">★</span>
+                        <span data-value="1" onclick="setRating(1)">★</span>
+                    </div>
+                    <div class="rating-msg" id="ratingMsg">Klicke auf einen Stern</div>
+                </div>
+
+                <!-- 2. Weiterempfehlung & Partner werden (Formspree) -->
+                <div class="footer-box">
+                    <h4>🤝 Weiterempfehlung & Partner</h4>
+                    <p>Schreibe deine Meinung oder werde Partner:</p>
+                    <form action="https://formspree.io/f/mgavaddk" method="POST">
+                        <input type="email" name="email" class="recommend-input" placeholder="Deine E-Mail-Adresse..." required>
+                        <textarea name="message" class="recommend-textarea" placeholder="Deine Meinung oder dein Partner-Anliegen..." required></textarea>
+                        <button type="submit" class="btn-send-recommend">Absenden an nagelkauen@gmail.com</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="footer-contact">
+                <a href="mailto:nagelkauen@gmail.com">&#128231; E-Mail: nagelkauen@gmail.com</a>
+                <span class="footer-separator">|</span>
+                <a href="https://chat.whatsapp.com/J0ysw9zKdEr8CbGarGtacF?mode=gi_t" target="_blank" rel="noopener">&#128172; WhatsApp-Gruppe beitreten</a>
+                <span class="footer-separator">|</span>
+                <a href="#days-container">&#128640; Zu den 21 Tagen</a>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- ============ REBELLION FINAL SCREEN ============ -->
+    <div class="rebellion-screen" id="rebellionScreen">
+        <canvas class="rebellion-canvas" id="fireworksCanvas"></canvas>
+        <div class="rebellion-content">
+            <div class="rebellion-title">DU HAST ES GESCHAFFT!</div>
+            <div class="rebellion-sub">Deine 21-Tage-Transformation ist komplett</div>
+
+            <div class="rebellion-name" id="rebellionName">NagelNEU Rebell:in</div>
+            <div class="rebellion-line" id="rebellionLine">Du hast 21 Tage lang die Kontrolle übernommen – deine Hände sind frei.</div>
+
+            <div class="rebellion-stats">
+                <div class="rebellion-stat">
+                    <div class="label">Gestoppte Impulse</div>
+                    <div class="value" id="finalCigs">0</div>
+                    <div class="unit">Stück</div>
+                </div>
+                <div class="rebellion-stat">
+                    <div class="label">Investition</div>
+                    <div class="value" id="finalMoney">0,00 &euro;</div>
+                    <div class="unit">Euro</div>
+                </div>
+                <div class="rebellion-stat">
+                    <div class="label">Freie Tage</div>
+                    <div class="value" id="finalLifeDays">21</div>
+                    <div class="unit">Tage</div>
+                </div>
+            </div>
+
+            <div class="rebellion-quote">
+                „Du hast 21 Tage lang jeden einzelnen Moment gewählt. Du hast gegen eine jahrelange Gewohnheit gewonnen. Du bist nicht mehr die Person, die diese Seite betreten hat – du bist frei.“
+                <span class="author">- Frank Zimmermann</span>
+            </div>
+
+            <div>
+                <button class="btn-rebellion" id="btnRestart" onclick="restartTransformation()">
+                    &#128260; Neu starten
+                </button>
+                <button class="btn-rebellion secondary" onclick="closeRebellionScreen()">
+                    Seite schließen
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const daysData = [
+            {
+                day: 1,
+                title: "Bewusstwerdung des Impulses",
+                phase: "Woche 1 – Bewusstsein",
+                aha: "Viele Gewohnheiten laufen automatisch ab. Die Hand bewegt sich zum Mund oder zu einer unebenen Nagelstelle, bevor der bewusste Verstand die Bewegung vollständig registriert. Der erste Schritt besteht deshalb nicht darin, den Drang mit Gewalt zu unterdrücken, sondern ihn möglichst früh wahrzunehmen.<br><br>Im Habit Reversal Training wird diese Fähigkeit als Awareness Training bezeichnet. Du lernst, die persönliche Abfolge zu erkennen: Situation, Körpergefühl, Impuls, Bewegung und Handlung.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Bewusstseinsunterbrechung:</i> Eine automatische Bewegung wird in eine beobachtbare Handlung verwandelt.<br>• <i>Ausgangsbasis:</i> Du erhältst einen realistischen Überblick über Häufigkeit und Situationen.<br>• <i>Entkopplung:</i> Ein Impuls wird nicht mehr automatisch mit Nagelbeißen verbunden.",
+                action: "Trage einen sicheren, angenehmen Erinnerungsanker am Handgelenk oder verwende einen anderen taktilen Gegenstand. Jedes Mal, wenn du einen Impuls oder eine Handbewegung bemerkst:<br>1. Halte kurz inne.<br>2. Sage innerlich: „Ich bemerke gerade einen Impuls.“<br>3. Lege die Hände auf eine neutrale Fläche.<br>4. Notiere am Abend ungefähr, wann und in welcher Situation der Drang auftrat.<br>5. Bewerte dich dabei nicht. Heute geht es ausschließlich ums Wahrnehmen."
+            },
+            {
+                day: 2,
+                title: "Interozeptive Vorboten und Körperwahrnehmung",
+                phase: "Woche 1 – Bewusstsein",
+                aha: "Ein Drang beginnt häufig nicht erst mit der Bewegung zum Mund. Oft gibt es vorher kleine körperliche Signale: Spannung in den Fingern, ein Kribbeln an einer Nagelkante, Unruhe in den Händen, zusammengepresste Lippen oder eine bestimmte Sitzhaltung.<br><br>Diese frühen Signale werden als interozeptive Vorboten bezeichnet. Je früher du sie erkennst, desto mehr Möglichkeiten hast du, eine alternative Handlung einzusetzen.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Früherkennung:</i> Der Impuls wird wahrgenommen, bevor die Handlung beginnt.<br>• <i>Körperliche Differenzierung:</i> Du lernst, zwischen Langeweile, Anspannung, Gewohnheitsbewegung und tatsächlichem Bedürfnis zu unterscheiden.<br>• <i>Selbstregulation:</i> Körperwahrnehmung schafft einen Zugang zur bewussten Steuerung.",
+                action: "Achte heute besonders auf:<br>• Spannung oder Unruhe in den Fingern,<br>• Berühren oder Abtasten der Nagelkanten,<br>• Handbewegungen in Richtung Gesicht,<br>• Pressen der Fingerkuppen,<br>• das Gefühl, „etwas korrigieren“ zu müssen.<br><br>Wenn du ein frühes Signal bemerkst, halte beide Hände für mindestens zehn Sekunden ruhig auf einer Unterlage. Notiere am Abend, welches körperliche Signal am häufigsten vor dem Drang auftrat."
+            },
+            {
+                day: 3,
+                title: "Das konkurrierende Verhalten",
+                phase: "Woche 1 – Bewusstsein",
+                aha: "Ein Impuls lässt sich leichter verändern, wenn nicht nur etwas unterlassen, sondern eine konkrete Alternative angeboten wird. Im HRT wird dies als Competing Response bezeichnet.<br><br>Die Ersatzhandlung sollte sicher, unauffällig und körperlich inkompatibel mit Nagelbeißen sein. Sie sollte außerdem mindestens eine halbe Minute gehalten werden können.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Motorische Unterbrechung:</i> Die Hände führen eine alternative Bewegung aus.<br>• <i>Neue Lernerfahrung:</i> Der Impuls kann abklingen, ohne dass Nagelbeißen notwendig ist.<br>• <i>Handlungsfähigkeit:</i> Du erlebst dich als aktiv entscheidende Person.",
+                action: "Wähle heute eine Haupt-Ersatzhandlung (z. B. Hände flach auf den Oberschenkeln ablegen, Finger verschränken oder einen weichen Gegenstand halten). Sobald der Impuls auftaucht:<br>1. Erkenne ihn.<br>2. Setze deine Ersatzhandlung für 30 bis 60 Sekunden ein.<br>3. Atme währenddessen langsam aus.<br>4. Kehre anschließend zu deiner Tätigkeit zurück."
+            },
+            {
+                day: 4,
+                title: "Situations- und Trigger-Mapping",
+                phase: "Woche 1 – Bewusstsein",
+                aha: "Gewohnheiten werden häufig durch bestimmte Situationen begünstigt. Dazu gehören nicht nur Stress, sondern auch Langeweile, Müdigkeit, Konzentration, Warten oder der Wechsel zwischen Tätigkeiten.<br><br>Durch das systematische Erfassen von Situationen werden persönliche Muster sichtbar. Ein Trigger ist kein unausweichlicher Befehl, sondern ein Hinweis darauf, dass erhöhte Aufmerksamkeit hilfreich sein kann.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Kontextuelle Sensibilisierung:</i> Bestimmte Situationen werden bewusster wahrgenommen.<br>• <i>Mustererkennung:</i> Wiederkehrende Abläufe können frühzeitig unterbrochen werden.<br>• <i>Vorbereitung:</i> Risikosituationen können mit Ersatzhandlungen geplant werden.",
+                action: "Notiere bei jedem bemerkten Impuls möglichst kurz:<br>• Uhrzeit, Ort, Tätigkeit, körperlicher Zustand, Stimmung, Stärke des Drangs von 0 bis 10.<br>Analysiere am Abend, ob sich ein wiederkehrender Ort, eine Tageszeit oder eine Tätigkeit erkennen lässt."
+            },
+            {
+                day: 5,
+                title: "Emotionale Zustandsanalyse",
+                phase: "Woche 1 – Bewusstsein",
+                aha: "Nagelbeißen oder Knibbeln kann kurzfristig Spannung, Langeweile oder innere Unruhe regulieren. Das bedeutet nicht, dass jede Handlung bewusst emotional motiviert ist. Dennoch kann es hilfreich sein, die Gefühlslage vor einem Impuls zu untersuchen.<br><br>Das Benennen eines Gefühls schafft Abstand und erleichtert die bewusste Entscheidung.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Emotionale Metakognition:</i> Du beobachtest deinen inneren Zustand.<br>• <i>Benennung:</i> Ein diffuses Gefühl wird konkreter und handhabbarer.<br>• <i>Alternative Regulation:</i> Du suchst nach einer passenden Reaktion statt nach einer automatischen.",
+                action: "Halte beim Auftreten eines Impulses drei Sekunden inne und frage dich: „Was empfinde ich gerade, und was könnten meine Hände regulieren wollen?“ (z. B. innere Unruhe, Frustration, Müdigkeit, Anspannung, Langeweile). Notiere abends die häufigsten Zustände."
+            },
+            {
+                day: 6,
+                title: "Visuelles Tagebuch und Externalisierung",
+                phase: "Woche 1 – Bewusstsein",
+                aha: "Gedanken und Impulse wirken oft größer, wenn sie nur im Kopf bleiben. Durch das Aufschreiben werden sie zu beobachtbaren Informationen. Eine einfache Übersicht kann helfen, zwischen tatsächlicher Häufigkeit und dem Gefühl eines „ständigen“ Problems zu unterscheiden.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Externalisierung:</i> Innere Vorgänge werden sichtbar.<br>• <i>Objektivierung:</i> Aus „Ich schaffe das nie“ wird eine konkrete Beobachtung.<br>• <i>Selbstwirksamkeit:</i> Fortschritte werden erkennbar.",
+                action: "Erstelle eine einfache Tabelle (Tag, Impulse, erfolgreich unterbrochen, häufigster Auslöser). Notiere zusätzlich einen Satz: „Heute hat mich überrascht, dass …“"
+            },
+            {
+                day: 7,
+                title: "Atemregulation und Zwischenbilanz",
+                phase: "Woche 1 – Bewusstsein",
+                aha: "Stress kann die Atmung beschleunigen und die körperliche Anspannung erhöhen. Eine langsamere, besonders verlängerte Ausatmung kann dabei helfen, eine kurze Unterbrechung zu schaffen und den Körper aus dem Autopiloten herauszuführen.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Physiologische Unterbrechung:</i> Der Körper erhält ein Signal zum Verlangsamen.<br>• <i>Aufmerksamkeitslenkung:</i> Fokus wechselt zum Atem.<br>• <i>Doppelte Handlungskette:</i> Wahrnehmen, atmen, Ersatzhandlung.",
+                action: "Nutze bei einem Impuls die Dreierkette: 1. Wahrnehmen, 2. Atmen (länger ausatmen), 3. Ersatzhandlung. Ziehe am Abend eine Zwischenbilanz."
+            },
+            {
+                day: 8,
+                title: "Gedanken erkennen und neu bewerten",
+                phase: "Woche 2 – Umlenkung",
+                aha: "Vor einer Gewohnheitshandlung können automatische Gedanken auftreten (z. B. „Nur diese eine Kante“ oder „Ich muss das sofort glätten“). Solche Gedanken sind verständlich, aber nicht automatisch wahr. Ziel ist es, sie zu prüfen.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Kognitive Distanz:</i> Ein Gedanke wird als Gedanke erkannt.<br>• <i>Realitätsprüfung:</i> Dringlichkeit und Notwendigkeit unterscheiden.<br>• <i>Neue Bewertung:</i> Der Impuls wird weniger absolut erlebt.",
+                action: "Schreibe bei einem starken Impuls drei Sätze auf: Automatischer Gedanke, Prüfung der Notwendigkeit, hilfreiche Antwort („Ich kann zehn Minuten warten und meine Hände schützen“)."
+            },
+            {
+                day: 9,
+                title: "Umgang mit Langeweile und Unterforderung",
+                phase: "Woche 2 – Umlenkung",
+                aha: "Nicht jeder Impuls entsteht durch starken Stress. Auch Wartezeiten, Fernsehen, Lesen oder monotone Tätigkeiten können die Aufmerksamkeit senken. Die Hände suchen dann möglicherweise nach einer Beschäftigung.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Reizsuche verstehen:</i> Alternative sensorische Aufgabe.<br>• <i>Übergangsplanung:</i> Leerlauf wird entkoppelt.<br>• <i>Umgebungsanpassung:</i> Hilfsmittel bereitlegen.",
+                action: "Lege an zwei typischen Langeweile-Orten einen sicheren Gegenstand bereit (weichen Ball, Stift, Handcreme) und nutze ihn bei Unruhe."
+            },
+            {
+                day: 10,
+                title: "Aufmerksamkeit während konzentrierter Tätigkeiten",
+                phase: "Woche 2 – Umlenkung",
+                aha: "Bei intensiver Konzentration kann der bewusste Blick von den Händen abgezogen sein. Die Hände bewegen sich dann manchmal automatisch, während die Aufmerksamkeit vollständig bei einer Aufgabe liegt.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Aufmerksamkeitswechsel:</i> Hände kurz einbeziehen.<br>• <i>Mikropausen:</i> Spannung frühzeitig bemerken.<br>• <i>Vorbeugung:</i> Unterbrechung vor dem starken Impuls.",
+                action: "Stelle dir bei längeren Aufgaben Timer für Mikro-Pausen: Hände ansehen, Schultern lockern, Finger öffnen und schließen."
+            },
+            {
+                day: 11,
+                title: "Hochstress und Leistungsdruck",
+                phase: "Woche 2 – Umlenkung",
+                aha: "Unter Zeitdruck, in Konflikten oder bei hoher mentaler Belastung sinkt die Fähigkeit zur bewussten Selbststeuerung oft vorübergehend. Du benötigst hier eine kurze Notfallroutine.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Stressbedingte Einschränkung:</i> Komplexe Entscheidungen vereinfachen.<br>• <i>Automatisierung:</i> Kurzen Ablauf abrufen.<br>• <i>Verhaltensentkopplung:</i> Impuls stoppen.",
+                action: "Verwende in Hochstressmomenten die Kurzform: Stopp – Ausatmen – Hände positionieren – weitermachen."
+            },
+            {
+                day: 12,
+                title: "Mikro-Gewohnheiten und Übergangsmomente",
+                phase: "Woche 2 – Umlenkung",
+                aha: "Viele Gewohnheiten entstehen in kurzen Übergängen: beim Laden einer Website, beim Warten, beim Öffnen einer Datei oder beim Telefonieren.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Autopilot erkennen:</i> Übergänge als Risikosituation.<br>• <i>Platzhalter einsetzen:</i> Sichere Handlung.<br>• <i>Kontextveränderung:</i> Ablauf neu gestalten.",
+                action: "Wähle drei typische Übergangsmomente (z. B. Website lädt → Hände auf den Tisch legen) und übe sie bewusst."
+            },
+            {
+                day: 13,
+                title: "Positive Verstärkung",
+                phase: "Woche 2 – Umlenkung",
+                aha: "Verhaltensänderung wird stabiler, wenn erfolgreiche Schritte bewusst wahrgenommen werden. Belohnung entsteht aus Anerkennung für eine hilfreiche Entscheidung, nicht aus Perfektion.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Selbstverstärkung:</i> Erfolgreiches Verhalten registrieren.<br>• <i>Positive Rückmeldung:</i> Emotionale Bedeutung.<br>• <i>Motivation:</i> Fortschritt messen.",
+                action: "Sage dir nach einer Unterbrechung: „Ich habe den Impuls bemerkt und anders gehandelt.“ Notiere abends drei bewältigte Momente."
+            },
+            {
+                day: 14,
+                title: "Halbzeit-Review und Anpassung",
+                phase: "Woche 2 – Umlenkung",
+                aha: "Heute wird das bisherige Vorgehen überprüft. Ein gutes Programm wird angepasst, statt starr durchgeführt zu werden. Betrachte deine Aufzeichnungen wie ein persönliches Experiment.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Metakognition:</i> Eigenes Lernverhalten beobachten.<br>• <i>Strategieauswahl:</i> Hilfreiche Methoden verstärken.<br>• <i>Realistische Bewertung:</i> Schwankungen einordnen.",
+                action: "Beantworte, welche Trigger am häufigsten waren und welche Ersatzhandlung am besten half. Formuliere einen neuen Leitsatz."
+            },
+            {
+                day: 15,
+                title: "Hand- und Nagelpflege",
+                phase: "Woche 3 – Identität",
+                aha: "Gepflegte Nägel können sichtbare Kanten und raue Stellen reduzieren, die zum Knibbeln einladen. Gleichzeitig stärkt eine angenehme Pflegehandlung die Verbindung zwischen Händen und Fürsorge.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Reduktion mechanischer Reize:</i> Unebenheiten glätten.<br>• <i>Sensorische Gegenkonditionierung:</i> Berührung mit Pflege verbinden.<br>• <i>Selbstfürsorge:</i> Hände als schützenswert wahrnehmen.",
+                action: "Nimm dir eine kurze Pflegeeinheit vor (Nägel feilen, eincremen, raue Stellen nicht aufreißen). Berühre danach die Nägel und sage: „Ich behandle meine Hände mit Schutz und Geduld.“"
+            },
+            {
+                day: 16,
+                title: "Identität und Selbstbild",
+                phase: "Woche 3 – Identität",
+                aha: "Langfristige Veränderung betrifft auch die Art, wie du dich selbst beschreibst. Sätze wie „Ich bin jemand, der immer Nägel beißt“ können das alte Muster festigen.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Identitätsbasierte Veränderung:</i> Verhalten mit Werten verbinden.<br>• <i>Kognitive Dissonanz:</i> Schädigendes Verhalten passt nicht zum Selbstbild.<br>• <i>Selbstrespekt:</i> Veränderung aus Fürsorge.",
+                action: "Formuliere einen Identitätssatz: „Ich kann meine Impulse wahrnehmen und meine Hände schützen.“ Wiederhole ihn morgens und in schwierigen Momenten."
+            },
+            {
+                day: 17,
+                title: "Rückfallprävention und Umgang mit schwierigen Momenten",
+                phase: "Woche 3 – Identität",
+                aha: "Ein Rückfallmoment bedeutet nicht, dass das Training gescheitert ist. Gewohnheiten können unter Stress vorübergehend wieder stärker werden. Entscheidend ist die sachliche Reaktion ohne Scham.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Rückfall als Information:</i> Ungeschützte Situation erkennen.<br>• <i>Schadensbegrenzung:</i> Handlung früh beenden.<br>• <i>Wiederaufnahme:</i> Routine sofort neu beginnen.",
+                action: "Falls du dich ertappst: Stoppe ohne Bestrafung, versorge die Stelle, atme aus und setze die Ersatzhandlung ein."
+            },
+            {
+                day: 18,
+                title: "Stabilisierung und mühelosere Selbstregulation",
+                phase: "Woche 3 – Identität",
+                aha: "Durch wiederholte Übung werden Handlungsabläufe vertrauter. Stabilität entsteht durch beständige Anwendung im Alltag.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Übungsabhängige Vertrautheit:</i> Zugriff erleichtern.<br>• <i>Automatisierung:</i> Weniger anstrengend.<br>• <i>Selbstvertrauen:</i> Bereitschaft stärken.",
+                action: "Achte auf Momente, in denen du Impulse früher erkannt oder Ersatzhandlungen spontaner eingesetzt hast. Notiere drei Erfolge."
+            },
+            {
+                day: 19,
+                title: "Zukunftsplanung und Rückfallprävention",
+                phase: "Woche 3 – Identität",
+                aha: "Nach dem Programm können alte Impulse in neuen Stressphasen wieder auftauchen. Eine vorausschauende Planung hilft, bevor eine schwierige Situation eintritt.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Mentale Vorbereitung:</i> Auslöser durchspielen.<br>• <i>Wenn-dann-Plan:</i> Entscheidung vereinfachen.<br>• <i>Langzeitstabilität:</i> Werkzeuge verfügbar halten.",
+                action: "Erstelle drei Wenn-dann-Pläne (z. B. Wenn Zeitdruck entsteht, dann lege ich die Hände flach auf den Tisch und atme aus)."
+            },
+            {
+                day: 20,
+                title: "Selbstständigkeit und flexible Anwendung",
+                phase: "Woche 3 – Identität",
+                aha: "Das Ziel ist nicht, dauerhaft von Hilfsmitteln abhängig zu bleiben. Heute wird geprüft, welche Elemente du wirklich brauchst.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Selbstständigkeit:</i> Verantwortung übernehmen.<br>• <i>Flexibilität:</i> Passende Strategie wählen.<br>• <i>Normalisierung:</i> Alltag integrieren.",
+                action: "Verbringe einen Teil des Tages ohne deinen Erinnerungsanker. Reflektiere abends, welche Hilfsmittel du reduzieren kannst."
+            },
+            {
+                day: 21,
+                title: "Integration, Selbstwirksamkeit und langfristige Freiheit",
+                phase: "Woche 3 – Identität",
+                aha: "Der 21. Tag markiert den Abschluss der Intensivphase und den Übergang in einen Erhaltungsplan. Ein Drang entscheidet nicht mehr automatisch über deine Hände.",
+                neuro: "<b>Psychologische Mechanismen:</b><br>• <i>Selbstwirksamkeit:</i> Erlebt, dass man anders handeln kann.<br>• <i>Verhaltensentkopplung:</i> Impuls und Handlung getrennt.<br>• <i>Rückfallkompetenz:</i> Krisen bewältigen.",
+                action: "Erstelle deinen Langzeitplan (Frühzeichen, Haupttrigger, Ersatzhandlung, Notfallstrategie) und verfasse eine Abschlussreflexion."
+            }
+        ];
+
+        const STORAGE_KEY_COMPLETED = 'nagelneu_completed_v1';
+        const STORAGE_KEY_PROFILE = 'nagelneu_profile_v1';
+        const STORAGE_KEY_START = 'nagelneu_start_timestamp';
+        const STORAGE_KEY_RATING = 'nagelneu_user_rating_v1';
+        const STORAGE_KEY_VISITOR = 'nagelneu_visitor_count_v1';
+
+        let completedDays = JSON.parse(localStorage.getItem(STORAGE_KEY_COMPLETED) || '[]');
+        let userProfile = JSON.parse(localStorage.getItem(STORAGE_KEY_PROFILE) || 'null');
+
+        function initVisitorCounter() {
+            let count = parseInt(localStorage.getItem(STORAGE_KEY_VISITOR) || '1247');
+            if (!sessionStorage.getItem('nagelneu_visited_session')) {
+                count += 1;
+                localStorage.setItem(STORAGE_KEY_VISITOR, count);
+                sessionStorage.setItem('nagelneu_visited_session', 'true');
+            }
+            const display = document.getElementById('visitorCountDisplay');
+            if (display) {
+                display.textContent = count.toLocaleString('de-DE');
+            }
+        }
+
+        function setRating(rating) {
+            localStorage.setItem(STORAGE_KEY_RATING, rating);
+            highlightStars(rating);
+            const msg = document.getElementById('ratingMsg');
+            if (msg) {
+                const praises = [
+                    "",
+                    "Danke für dein Feedback!",
+                    "Danke dir! Schön, dass es hilft.",
+                    "Vielen Dank für die gute Bewertung!",
+                    "Klasse! Vielen Dank für den Support.",
+                    "Wahnsinn, 5 Sterne! Vielen Dank!"
+                ];
+                msg.textContent = praises[rating] || "Danke für deine Bewertung!";
+            }
+        }
+
+        function loadRating() {
+            const savedRating = localStorage.getItem(STORAGE_KEY_RATING);
+            if (savedRating) {
+                highlightStars(parseInt(savedRating));
+                const msg = document.getElementById('ratingMsg');
+                if (msg) {
+                    msg.textContent = `${savedRating}/5 Sterne gespeichert. Danke!`;
+                }
+            }
+        }
+
+        function highlightStars(rating) {
+            const container = document.getElementById('ratingStars');
+            if (!container) return;
+            const spans = container.querySelectorAll('span');
+            spans.forEach(span => {
+                const val = parseInt(span.getAttribute('data-value'));
+                if (val <= rating) {
+                    span.classList.add('selected');
+                } else {
+                    span.classList.remove('selected');
+                }
+            });
+        }
+
+        function getUnlockedDaysCount() {
+            let startTime = localStorage.getItem(STORAGE_KEY_START);
+            if (!startTime && userProfile && userProfile.birthday) {
+                startTime = new Date(userProfile.birthday).getTime();
+            }
+            if (!startTime) return 1;
+            const diffTime = Date.now() - parseInt(startTime);
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+            return Math.max(1, Math.min(21, diffDays + 1));
+        }
+
+        function saveProfile() {
+            const name = document.getElementById('userName').value.trim();
+            const birthday = document.getElementById('userBirthday').value;
+            const cigs = parseInt(document.getElementById('userCigs').value);
+            const price = parseFloat(document.getElementById('userPrice').value);
+
+            if (!name || !birthday || isNaN(cigs) || isNaN(price)) {
+                alert('Bitte fülle alle vier Felder aus, damit deine Statistik funktioniert.');
+                return;
+            }
+
+            userProfile = { name, birthday, cigs, price };
+            localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(userProfile));
+            
+            if (!localStorage.getItem(STORAGE_KEY_START)) {
+                localStorage.setItem(STORAGE_KEY_START, new Date(birthday).getTime());
+            }
+
+            updateMetrics();
+            renderDays();
+        }
+
+        function loadProfile() {
+            if (userProfile) {
+                const n = document.getElementById('userName');
+                const b = document.getElementById('userBirthday');
+                const c = document.getElementById('userCigs');
+                const p = document.getElementById('userPrice');
+                if (n) n.value = userProfile.name || '';
+                if (b) b.value = userProfile.birthday || '';
+                if (c) c.value = userProfile.cigs || '';
+                if (p) p.value = userProfile.price || '';
+                updateMetrics();
+            }
+        }
+
+        function updateMetrics() {
+            if (!userProfile) return;
+            let startTime = localStorage.getItem(STORAGE_KEY_START) || new Date(userProfile.birthday).getTime();
+            const now = new Date();
+            const ms = now - startTime;
+            if (ms <= 0) return;
+
+            const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+            const savedCigs = days * userProfile.cigs;
+            const savedMoney = completedDays.length * userProfile.price;
+
+            const el1 = document.getElementById('savedCigsValue');
+            const el2 = document.getElementById('savedMoneyValue');
+            const el3 = document.getElementById('daysGainedValue');
+            if (el1) el1.textContent = savedCigs.toLocaleString('de-DE');
+            if (el2) el2.textContent = savedMoney.toLocaleString('de-DE', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' \u20AC';
+            if (el3) el3.textContent = completedDays.length;
+        }
+
+        function activateTransformation() {
+            if (!localStorage.getItem(STORAGE_KEY_START)) {
+                localStorage.setItem(STORAGE_KEY_START, Date.now());
+            }
+
+            const btn = document.getElementById('switchBtn');
+            const icon = document.getElementById('btnIcon');
+            const text = document.getElementById('btnText');
+            const msg = document.getElementById('statusMsg');
+
+            btn.classList.add('active');
+            icon.textContent = "\u2705";
+            text.textContent = "SYSTEM AKTIVIERT";
+            msg.classList.add('show');
+
+            renderDays();
+
+            setTimeout(() => {
+                const target = document.getElementById('days-container');
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 400);
+        }
+
+        function toggleAccordion(dayNum) {
+            const unlockedCount = getUnlockedDaysCount();
+            if (dayNum > unlockedCount) {
+                alert('🔒 Dieser Tag ist noch gesperrt! Er öffnet sich erst am Folgetag.');
+                return;
+            }
+            const card = document.getElementById('day-card-' + dayNum);
+            if (card) card.classList.toggle('open');
+        }
+
+        function renderDays() {
+            const container = document.getElementById('days-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const unlockedCount = getUnlockedDaysCount();
+
+            daysData.forEach(item => {
+                const isLocked = item.day > unlockedCount;
+                const isDone = completedDays.includes(item.day);
+
+                const card = document.createElement('div');
+                card.className = 'card';
+                if (isLocked) card.classList.add('locked');
+                if (isDone) card.classList.add('completed');
+                card.id = 'day-card-' + item.day;
+
+                let rightContentHtml = '';
+                if (isLocked) {
+                    rightContentHtml = '<span class="lock-badge">&#128274; Gesperrt</span>';
+                } else {
+                    rightContentHtml = '<span class="phase-tag">' + item.phase + '</span>' +
+                                       '<div class="chevron-icon">&#9660;</div>';
+                }
+
+                card.innerHTML =
+                    '<div class="day-header" onclick="toggleAccordion(' + item.day + ')">' +
+                        '<div class="day-header-left">' +
+                            '<span class="day-badge">TAG ' + item.day + '</span>' +
+                            '<span class="day-title-preview">' + item.title + '</span>' +
+                        '</div>' +
+                        '<div class="day-header-right">' +
+                            rightContentHtml +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="day-content">' +
+                        '<div class="highlight-box">' +
+                            '<strong>&#128161; Erläuterung:</strong>' +
+                            '<p style="margin-top:8px;">' + item.aha + '</p>' +
+                        '</div>' +
+                        '<div class="neuro-box">' +
+                            '<p>' + item.neuro + '</p>' +
+                        '</div>' +
+                        '<div class="action-box">' +
+                            '<h5>&#127919; Praktische Umsetzung (Action)</h5>' +
+                            '<p>' + item.action + '</p>' +
+                        '</div>' +
+                        '<button class="btn-complete' + (isDone ? ' is-done' : '') + '" onclick="toggleDay(' + item.day + ', event)" id="completeBtn' + item.day + '">' +
+                            (isDone ? '&#9989; Tag erledigt' : '&#9744; Tag als erledigt markieren') +
+                        '</button>' +
+                    '</div>';
+                container.appendChild(card);
+            });
+
+            updateProgress();
+        }
+
+        function toggleDay(dayNum, event) {
+            if (event) event.stopPropagation();
+
+            if (completedDays.includes(dayNum)) {
+                completedDays = completedDays.filter(d => d !== dayNum);
+            } else {
+                completedDays.push(dayNum);
+                completedDays.sort((a, b) => a - b);
+            }
+            localStorage.setItem(STORAGE_KEY_COMPLETED, JSON.stringify(completedDays));
+
+            const card = document.getElementById('day-card-' + dayNum);
+            const btn = document.getElementById('completeBtn' + dayNum);
+
+            if (completedDays.includes(dayNum)) {
+                if (card) card.classList.add('completed');
+                if (btn) {
+                    btn.classList.add('is-done');
+                    btn.innerHTML = '&#9989; Tag erledigt';
+                }
+            } else {
+                if (card) card.classList.remove('completed');
+                if (btn) {
+                    btn.classList.remove('is-done');
+                    btn.innerHTML = '&#9744; Tag als erledigt markieren';
+                }
+            }
+
+            updateProgress();
+            updateMetrics();
+            checkFinalRebellion();
+        }
+
+        function updateProgress() {
+            const count = completedDays.length;
+            const total = daysData.length;
+            const pct = (count / total) * 100;
+            const fill = document.getElementById('progressFill');
+            const txt = document.getElementById('progressText');
+            if (fill) fill.style.width = pct + '%';
+            if (txt) txt.textContent = count + ' / ' + total + ' Tagen abgeschlossen';
+        }
+
+        function checkFinalRebellion() {
+            if (completedDays.length >= 21) {
+                setTimeout(showRebellionScreen, 600);
+            }
+        }
+
+        function showRebellionScreen() {
+            const screen = document.getElementById('rebellionScreen');
+            if (!screen) return;
+            screen.classList.add('show');
+            document.body.style.overflow = 'hidden';
+
+            const nameEl = document.getElementById('rebellionName');
+            const lineEl = document.getElementById('rebellionLine');
+            if (userProfile && userProfile.name) {
+                nameEl.textContent = userProfile.name + ', deine NagelNEU Transformation ist komplett!';
+                if (lineEl) lineEl.textContent = 'Du hast 21 Tage lang die bewusste Kontrolle behalten – deine Hände sind frei und stark.';
+            }
+
+            startFireworks();
+        }
+
+        function closeRebellionScreen() {
+            const screen = document.getElementById('rebellionScreen');
+            if (!screen) return;
+            screen.classList.remove('show');
+            document.body.style.overflow = '';
+            stopFireworks();
+        }
+
+        function restartTransformation() {
+            if (confirm('Möchtest du wirklich neu starten? Alle deine Tag-Markierungen werden zurückgesetzt.')) {
+                completedDays = [];
+                localStorage.removeItem(STORAGE_KEY_COMPLETED);
+                localStorage.removeItem(STORAGE_KEY_START);
+                renderDays();
+                closeRebellionScreen();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        let fireworksAnim = null;
+        let particles = [];
+        let fireworks = [];
+
+        function startFireworks() {
+            const canvas = document.getElementById('fireworksCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            for (let i = 0; i < 180; i++) {
+                particles.push(makeConfetti());
+            }
+            launchFirework();
+
+            function animate() {
+                ctx.fillStyle = 'rgba(18, 22, 32, 0.18)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const p = particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.12;
+                    p.vx *= 0.99;
+                    p.life--;
+
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.rotation);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = Math.max(p.life / p.maxLife, 0);
+                    ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.5);
+                    ctx.restore();
+
+                    if (p.life <= 0 || p.y > canvas.height + 50) {
+                        particles.splice(i, 1);
+                    }
+                }
+
+                for (let i = fireworks.length - 1; i >= 0; i--) {
+                    const fw = fireworks[i];
+                    fw.x += fw.vx;
+                    fw.y += fw.vy;
+                    fw.vy += 0.05;
+                    fw.trail.push({ x: fw.x, y: fw.y });
+                    if (fw.trail.length > 8) fw.trail.shift();
+
+                    for (let t = 0; t < fw.trail.length; t++) {
+                        const pt = fw.trail[t];
+                        const alpha = t / fw.trail.length;
+                        ctx.fillStyle = fw.color;
+                        ctx.globalAlpha = alpha;
+                        ctx.beginPath();
+                        ctx.arc(pt.x, pt.y, 2.5, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+
+                    if (fw.y <= fw.targetY || fw.vy >= 0) {
+                        const colors = ['#00f2fe', '#4facfe', '#34d399', '#fbbf24', '#9f7aea'];
+                        for (let e = 0; e < 60; e++) {
+                            const angle = (Math.PI * 2 * e) / 60;
+                            const speed = Math.random() * 5 + 2;
+                            particles.push({
+                                x: fw.x,
+                                y: fw.y,
+                                vx: Math.cos(angle) * speed,
+                                vy: Math.sin(angle) * speed,
+                                size: Math.random() * 5 + 2,
+                                color: colors[Math.floor(Math.random() * colors.length)],
+                                life: 80,
+                                maxLife: 80,
+                                rotation: Math.random() * Math.PI * 2
+                            });
+                        }
+                        fireworks.splice(i, 1);
+                    }
+                }
+
+                if (Math.random() < 0.03 && fireworks.length < 4) {
+                    launchFirework();
+                }
+
+                if (Math.random() < 0.5 && particles.length < 280) {
+                    particles.push(makeConfetti());
+                }
+
+                fireworksAnim = requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        function makeConfetti() {
+            const colors = ['#00f2fe', '#4facfe', '#34d399', '#fbbf24', '#9f7aea', '#ffffff'];
+            return {
+                x: Math.random() * window.innerWidth,
+                y: -20 - Math.random() * 100,
+                vx: (Math.random() - 0.5) * 3,
+                vy: Math.random() * 2 + 1,
+                size: Math.random() * 6 + 3,
+                color: colors[Math.floor(Math.random() * colors.length)],
+                life: 220,
+                maxLife: 220,
+                rotation: Math.random() * Math.PI * 2
+            };
+        }
+
+        function launchFirework() {
+            const colors = ['#00f2fe', '#4facfe', '#34d399', '#fbbf24', '#9f7aea'];
+            fireworks.push({
+                x: Math.random() * window.innerWidth * 0.8 + window.innerWidth * 0.1,
+                y: window.innerHeight,
+                vx: (Math.random() - 0.5) * 3,
+                vy: -((Math.random() * 4) + 9),
+                targetY: window.innerHeight * (0.2 + Math.random() * 0.3),
+                color: colors[Math.floor(Math.random() * colors.length)],
+                trail: []
+            });
+        }
+
+        function stopFireworks() {
+            if (fireworksAnim) {
+                cancelAnimationFrame(fireworksAnim);
+                fireworksAnim = null;
+            }
+            const canvas = document.getElementById('fireworksCanvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+            particles = [];
+            fireworks = [];
+        }
+
+        window.onload = function() {
+            initVisitorCounter();
+            loadRating();
+            loadProfile();
+            renderDays();
+        };
+    </script>
+</body>
+</html>
