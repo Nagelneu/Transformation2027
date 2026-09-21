@@ -1436,14 +1436,35 @@
             });
         }
 
+        /* 
+           FREISCHALTUNG JEDEN TAG UM MITTERNACHT (00:00 UHR):
+           Berechnet die Kalendertage zwischen dem Startdatum (00:00 Uhr) und dem heutigen Datum (00:00 Uhr).
+        */
         function getUnlockedDaysCount() {
             let startTime = localStorage.getItem(STORAGE_KEY_START);
             if (!startTime && userProfile && userProfile.birthday) {
-                startTime = new Date(userProfile.birthday).getTime();
+                startTime = new Date(userProfile.birthday + 'T00:00:00').getTime();
             }
             if (!startTime) return 1;
-            const diffTime = Date.now() - parseInt(startTime);
-            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+            let startMs = parseInt(startTime);
+            if (isNaN(startMs)) {
+                startMs = new Date(startTime).getTime();
+            }
+            if (isNaN(startMs)) return 1;
+
+            // Startdatum auf Mitternacht (00:00:00) setzen
+            const startDate = new Date(startMs);
+            const startMidnight = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()).getTime();
+
+            // Heutiges Datum auf Mitternacht (00:00:00) setzen
+            const now = new Date();
+            const nowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+            // Differenz in Kalendertagen berechnen
+            const diffDays = Math.floor((nowMidnight - startMidnight) / (1000 * 60 * 60 * 24));
+
+            // Tag 1 am Starttag (diffDays = 0), Tag 2 ab der ersten Mitternacht (diffDays = 1) usw.
             return Math.max(1, Math.min(21, diffDays + 1));
         }
 
@@ -1462,7 +1483,9 @@
             localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(userProfile));
             
             if (!localStorage.getItem(STORAGE_KEY_START)) {
-                localStorage.setItem(STORAGE_KEY_START, new Date(birthday).getTime());
+                // Setzt den Start-Timestamp auf Mitternacht des gewählten Startdatums
+                const startObj = new Date(birthday + 'T00:00:00');
+                localStorage.setItem(STORAGE_KEY_START, startObj.getTime());
             }
 
             updateMetrics();
@@ -1485,7 +1508,7 @@
 
         function updateMetrics() {
             if (!userProfile) return;
-            let startTime = localStorage.getItem(STORAGE_KEY_START) || new Date(userProfile.birthday).getTime();
+            let startTime = localStorage.getItem(STORAGE_KEY_START) || new Date(userProfile.birthday + 'T00:00:00').getTime();
             const now = new Date();
             const ms = now - startTime;
             if (ms <= 0) return;
@@ -1528,7 +1551,7 @@
         function toggleAccordion(dayNum) {
             const unlockedCount = getUnlockedDaysCount();
             if (dayNum > unlockedCount) {
-                alert('🔒 Dieser Tag ist noch gesperrt! Er öffnet sich erst am Folgetag.');
+                alert('🔒 Dieser Tag ist noch gesperrt! Er öffnet sich erst um Mitternacht.');
                 return;
             }
             const card = document.getElementById('day-card-' + dayNum);
