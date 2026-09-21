@@ -128,30 +128,74 @@
             font-weight: 500;
         }
 
-        .header-title { text-align: center; margin-bottom: 35px; }
+        /* Header mit integriertem Logo */
+        .header-section {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            margin-bottom: 35px;
+            background: var(--clay-card);
+            padding: 30px;
+            border-radius: 24px;
+            box-shadow: var(--shadow-outer);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
 
-        .header-title h1 {
-            font-size: clamp(1.8rem, 4vw, 2.6rem);
+        .header-logo-wrap {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            box-shadow: var(--shadow-inner);
+            border: 2px solid rgba(0, 242, 254, 0.3);
+            background: var(--clay-bg);
+        }
+
+        .header-logo-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .header-content {
+            flex-grow: 1;
+        }
+
+        .header-content h1 {
+            font-size: clamp(1.6rem, 3.5vw, 2.3rem);
             font-weight: 800;
             color: var(--text-white);
             text-transform: uppercase;
             letter-spacing: -0.5px;
             line-height: 1.3;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
-        .header-title h1 span {
+        .header-content h1 span {
             background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .header-title p.subtitle {
-            font-size: 1.05rem;
+        .header-content p.subtitle {
+            font-size: 0.98rem;
             color: var(--text-muted);
-            max-width: 700px;
-            margin: 0 auto;
             font-weight: 400;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .header-section {
+                flex-direction: column;
+                text-align: center;
+                padding: 24px 20px;
+            }
+            .header-logo-wrap {
+                width: 100px;
+                height: 100px;
+                margin: 0 auto;
+            }
         }
 
         /* 3D Clay Audio Player Card */
@@ -975,10 +1019,15 @@
             <div class="program-phase">NagelNEU – 3D Clay Edition</div>
         </div>
 
-        <!-- Main Header -->
-        <header class="header-title">
-            <h1>Frank Zimmermann – <span>NagelNEU Transformation</span></h1>
-            <p class="subtitle">Dein neuer Weg in ein nagelfreies, gesundes & kraftvolles Leben – Habit Reversal Training (HRT) & kognitiv-verhaltenstherapeutische Selbsthilfe im Matte Claymorphism-Design.</p>
+        <!-- Main Header mit integriertem Logo -->
+        <header class="header-section">
+            <div class="header-logo-wrap">
+                <img src="image_3d2d3b.jpg" alt="NagelNEU Logo">
+            </div>
+            <div class="header-content">
+                <h1>Frank Zimmermann – <span>NagelNEU Transformation</span></h1>
+                <p class="subtitle">Dein neuer Weg in ein nagelfreies, gesundes & kraftvolles Leben – Habit Reversal Training (HRT) & kognitiv-verhaltenstherapeutische Selbsthilfe im Matte Claymorphism-Design.</p>
+            </div>
         </header>
 
         <!-- MINI SPRACHPLAYER -->
@@ -1436,10 +1485,6 @@
             });
         }
 
-        /* 
-           FREISCHALTUNG JEDEN TAG UM MITTERNACHT (00:00 UHR):
-           Berechnet die Kalendertage zwischen dem Startdatum (00:00 Uhr) und dem heutigen Datum (00:00 Uhr).
-        */
         function getUnlockedDaysCount() {
             let startTime = localStorage.getItem(STORAGE_KEY_START);
             if (!startTime && userProfile && userProfile.birthday) {
@@ -1453,18 +1498,13 @@
             }
             if (isNaN(startMs)) return 1;
 
-            // Startdatum auf Mitternacht (00:00:00) setzen
             const startDate = new Date(startMs);
             const startMidnight = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate()).getTime();
 
-            // Heutiges Datum auf Mitternacht (00:00:00) setzen
             const now = new Date();
             const nowMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
 
-            // Differenz in Kalendertagen berechnen
             const diffDays = Math.floor((nowMidnight - startMidnight) / (1000 * 60 * 60 * 24));
-
-            // Tag 1 am Starttag (diffDays = 0), Tag 2 ab der ersten Mitternacht (diffDays = 1) usw.
             return Math.max(1, Math.min(21, diffDays + 1));
         }
 
@@ -1483,7 +1523,6 @@
             localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(userProfile));
             
             if (!localStorage.getItem(STORAGE_KEY_START)) {
-                // Setzt den Start-Timestamp auf Mitternacht des gewählten Startdatums
                 const startObj = new Date(birthday + 'T00:00:00');
                 localStorage.setItem(STORAGE_KEY_START, startObj.getTime());
             }
@@ -1840,7 +1879,6 @@
             loadProfile();
             renderDays();
             
-            // Audio Error Monitoring
             const audioEl = document.getElementById('introAudio');
             const subEl = document.getElementById('audioSubText');
             if (audioEl) {
@@ -1855,3 +1893,4 @@
     </script>
 </body>
 </html>
+```[cite: 12, 13]
